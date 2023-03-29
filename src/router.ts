@@ -1,36 +1,82 @@
 import { Router } from "express";
-import { createUser, signin } from "./handlers/user";
+import { body } from "express-validator";
+import handleErrors from "./utils/middleware";
+import {
+  getProducts,
+  getProduct,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+} from "./handlers/product";
 
 const router = Router();
 
 /* product routes */
-router.get("/product", (req, res) => {
-  res.json({ msg: "hello", name: req.theName });
-});
-router.get("/product/:id", (req, res) => {});
-router.post("/product", (req, res) => {});
-router.put("/product/:id", (req, res) => {});
-router.delete("/product/:id", (req, res) => {});
+
+router.get("/product", getProducts);
+router.get("/product/:id", getProduct);
+router.post(
+  "/product",
+  [body("name").isLength({ min: 1 }), handleErrors],
+  createProduct
+);
+router.put(
+  "/product/:id",
+  [body("name").isLength({ min: 1 }), handleErrors],
+  updateProduct
+);
+router.delete("/product/:id", deleteProduct);
 
 /* update routes */
 router.get("/update", (req, res) => {});
 router.get("/update/:id", (req, res) => {});
-router.post("/update", (req, res) => {});
-router.put("/update/:id", (req, res) => {});
+router.post(
+  "/update",
+  [
+    body("title").isLength({ min: 1 }),
+    body("body").isLength({ min: 1 }),
+    body("status").isIn(["IN_PROGRESS", "LIVE", "DEPRECATED", "ARCHIVED"]),
+    body("version").optional().isInt({ min: 1 }),
+    handleErrors,
+  ],
+  (req, res) => {}
+);
+router.put(
+  "/update/:id",
+  [
+    body("title").isLength({ min: 1 }),
+    body("body").isLength({ min: 1 }),
+    body("status").isIn(["IN_PROGRESS", "LIVE", "DEPRECATED", "ARCHIVED"]),
+    body("version").isInt({ min: 1 }),
+    handleErrors,
+  ],
+  (req, res) => {}
+);
 router.delete("/update/:id", (req, res) => {});
 
 /* updatepoint routes */
 router.get("/updatepoint", (req, res) => {});
 router.get("/updatepoint/:id", (req, res) => {});
-router.post("/updatepoint", (req, res) => {});
-router.put("/updatepoint/:id", (req, res) => {});
+router.post(
+  "/updatepoint",
+  [
+    body("name").isLength({ min: 1 }),
+    body("body").isLength({ min: 1 }),
+    body("description").isLength({ min: 1 }),
+    handleErrors,
+  ],
+  (req, res) => {}
+);
+router.put(
+  "/updatepoint/:id",
+  [
+    body("name").isLength({ min: 1 }),
+    body("body").isLength({ min: 1 }),
+    body("description").isLength({ min: 1 }),
+    handleErrors,
+  ],
+  (req, res) => {}
+);
 router.delete("/updatepoint/:id", (req, res) => {});
-/* user */
-
-router.get("/userData", (req, res) => {
-  res.json(req.user);
-});
-router.post("/signup", createUser);
-router.post("/login", signin);
 
 export default router;

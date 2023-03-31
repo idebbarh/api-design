@@ -37,6 +37,8 @@ router.post(
     body("body").isLength({ min: 1 }),
     body("status").isIn(["IN_PROGRESS", "LIVE", "DEPRECATED", "ARCHIVED"]),
     body("version").optional().isInt({ min: 1 }),
+    body("asset").isLength({ min: 1 }),
+    body("productId").isLength({ min: 1 }),
     handleErrors,
   ],
   (req, res) => {}
@@ -48,6 +50,7 @@ router.put(
     body("body").isLength({ min: 1 }),
     body("status").isIn(["IN_PROGRESS", "LIVE", "DEPRECATED", "ARCHIVED"]),
     body("version").isInt({ min: 1 }),
+    body("asset").isLength({ min: 1 }),
     handleErrors,
   ],
   (req, res) => {}
@@ -55,7 +58,12 @@ router.put(
 router.delete("/update/:id", (req, res) => {});
 
 /* updatepoint routes */
-router.get("/updatepoint", (req, res) => {});
+router.get(
+  "/updatepoint",
+  body("updateId").exists().isString(),
+  handleErrors,
+  (req, res) => {}
+);
 router.get("/updatepoint/:id", (req, res) => {});
 router.post(
   "/updatepoint",

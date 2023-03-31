@@ -8,17 +8,22 @@ function serverResponse(res, msg, code) {
   return;
 }
 
-async function createUser(req, res) {
+async function createUser(req, res, next) {
   const username = req.body.username;
-  const hashedPassword = await hashPassword(req.body.password);
-  const user = await client.user.create({
-    data: {
-      username,
-      password: hashedPassword,
-    },
-  });
-  const token = createJWT(user);
-  res.json({ token });
+  try {
+    const hashedPassword = await hashPassword(req.body.password);
+    const user = await client.user.create({
+      data: {
+        username,
+        password: hashedPassword,
+      },
+    });
+    const token = createJWT(user);
+    res.json({ token });
+  } catch (err) {
+    err.type = "input";
+    next(err);
+  }
 }
 
 async function signin(req, res) {
